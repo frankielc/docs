@@ -44,7 +44,7 @@ Upgrade Vaadin version in `pom.xml` / `build.gradle` to the latest Vaadin 24 rel
 .pom.xml
 [source,xml]
 ----
-<vaadin.version>24.0.0.alpha5</vaadin.version>
+<vaadin.version>24.0.0.beta1</vaadin.version>
 ----
 
 See the link:https://github.com/vaadin/platform/releases[list of releases in GitHub] for the latest one.
@@ -63,20 +63,6 @@ Since the pre-release is used, you have to add the following repositories:
     <id>vaadin-prereleases</id>
     <url>https://maven.vaadin.com/vaadin-prereleases/</url>
 </pluginRepository>
-----
-
-Flow Context and Dependency Injection (CDI) add-on is currently using the snapshot version of DeltaSpike framework. Therefore, you need to add a snapshot repository to get this dependency if you use CDI add-on:
-
-.pom.xml
-[source,xml]
-----
-<repository>
-    <id>apache-snapshot-repository</id>
-    <url>https://repository.apache.org/snapshots/</url>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
-</repository>
 ----
 
 == Jakarta EE 10 Namespaces
@@ -249,7 +235,15 @@ java {
 
 == Application Servers
 
-Before migrating, find the corresponding version of Jakarta EE 10-compatible application server used in your project. See https://jakarta.ee/compatibility/[Jakarta Compatible Products] for more information.
+Before migrating, find the corresponding version of Jakarta EE 10-compatible application server used in your project.
+
+See https://jakarta.ee/compatibility/[Jakarta Compatible Products] for more information.
+
+CDI 4.0 specification (part of Jakarta EE 10) changes the default value of `bean-discovery-mode` attribute to **annotated** and uses **annotated** as the default when an empty [filename]`beans.xml` is seen in a deployment, see https://jakarta.ee/specifications/cdi/4.0/.
+
+To let the container scan and manage Vaadin components and views when the `bean-discovery-mode` attribute is not defined (default is used), one should annotate Vaadin components and views with the `com.vaadin.cdi.annotation.CdiComponent` annotation to allow Vaadin components to be correctly detected as a CDI beans.
+
+Or set `bean-discovery-mode=all` in the [filename]`beans.xml` if it's applicable to your project, but this is not a recommended way.
 
 == Polymer Templates
 
@@ -375,16 +369,24 @@ Multiplatform Runtime add-on allows the use of legacy Vaadin 7 or 8 framework co
 .pom.xml
 [source,xml]
 ----
+<!-- Vaadin 8 -->
 <dependency>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-server-mpr-jakarta</artifactId>
-    <version>8.18.0</version>
+    <version>8.19.0</version>
 </dependency>
 
 <dependency>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-compatibility-server-mpr-jakarta</artifactId>
-    <version>8.18.0</version>
+    <version>8.19.0</version>
+</dependency>
+
+<!-- Vaadin 7 -->
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-server-mpr-jakarta</artifactId>
+    <version>7.7.37</version>
 </dependency>
 ----
 
